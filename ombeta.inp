@@ -1,0 +1,165 @@
+=csas6
+MSR Omicron Beta
+ce_v7.1
+
+read parm
+    npg=100000
+    gen=2020
+    nsk=20
+end parm
+
+read bounds
+    all=vacuum
+end bounds
+
+read definitions
+    gridGeometry 100
+        xLinear 200 200 -200
+        yLinear 200 200 -200
+        zLinear 300 150 -150
+    end gridGeometry
+
+    read energyBounds DEFAULT
+        title "1 group for everything but fluxes"
+        bounds 20000000.0 1e-05 end
+    end energyBounds
+
+    read energybounds 3
+        title "Fast, epithermal, thermal energy groups"
+        bounds 20000000.0 100000.0 5.0 1e-05 end
+    end energyBounds
+end definitions
+
+read tallies
+    read mesh 1
+        energy=3
+        grid=100
+        response=FLUX
+    end mesh
+    read mesh 2
+        energy=DEFAULT
+        grid=100
+        response=FISSION_DENSITY
+    end mesh
+    read mesh 3
+        energy=DEFAULT
+        grid=100
+        response=FISSION_SOURCE
+    end mesh
+end tallies
+
+
+read comp
+'fuel'
+atomFLiBeUF 1 2.645 4
+3000    672
+4000    278
+92000    50
+9000   1428
+1.0 873
+3007 99.99  3006 0.01
+92235 19.75 92238 79.95 92234 0.20 92236 0.1 end
+
+'graphite'
+atomGraphite 2 1.74 3
+3006000 9999980
+5010    0000004
+5011    0000016 1 873 end
+
+'stainless steel (reactor)'
+atomReactorSteel 3 8.0 9
+6000  001900
+14000 010048
+15031 000413
+16000 000260
+24000 181986
+25055 010274
+26000 666811
+28000 113803
+42000 014504 1 873 end
+
+'helium'
+he 4 den=0.000055 1.0 873 end
+
+'Material:InternalShield Number:19'
+h-poly 19 0 0.0807166 300 end
+c 19 0 0.0403583 300 end
+
+
+h-poly 119 0 0.074896 end
+c 119 0 0.038841 end
+b 119 0 0.005570 end
+
+end comp
+
+
+read geom
+'fuel channel'
+unit 1
+rhexprism 1 5.0 0 140
+cylinder 2 1.50 0 140
+media 2 1 1 -2
+media 1 1 2
+boundary 1
+'graphite only'
+unit 2
+rhexprism 1 5.0 0 140
+
+media 2 1 1
+boundary 1
+
+'reactor'
+global unit 100
+cylinder 11  66.0   70.0  -70.0
+cylinder 12  68.0   72.0  -72.0
+cylinder 13  71.0   75.0  -75.0
+cylinder 20   5.0  150.0   72.0
+cylinder 21   6.0  150.0   72.0
+cylinder 22   5.0 -150.0  -72.0
+cylinder 23   6.0 -150.0  -72.0
+cylinder 90 100.0  150.0 -150.0
+
+'core'
+array 1 11 place 11 10 1 5.8 0.0 -70.0
+media 1 1  12 -11
+media 3 1  13 -12 -21 -23
+
+'up pipe'
+media 1 1  20
+media 3 1  21 -20
+
+'down pipe'
+media 1 1  22
+media 3 1  23 -22
+
+'helium'
+media 4 1  90 -13 -21 -23
+boundary 90
+end geom
+
+read array
+ara=1 typ=rhexagonal nux=19 nuy=18 nuz=1
+fill
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 1 2 1 2 1 2 2 2 2 2 2 2
+2 2 2 2 2 2 1 1 1 1 1 1 1 1 2 2 2 2 2
+2 2 2 2 2 1 1 1 1 1 1 1 1 1 2 2 2 2 2
+2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 2 2 2 2
+2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2
+2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2
+2 2 2 2 1 1 1 1 1 1 1 1 1 1 1 2 2 2 2
+2 2 2 2 2 1 1 1 1 1 1 1 1 1 1 2 2 2 2
+2 2 2 2 2 2 1 1 1 1 1 1 1 1 2 2 2 2 2
+2 2 2 2 2 2 1 1 1 1 1 1 1 2 2 2 2 2 2
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+end fill
+end array
+
+end data
+end
